@@ -8,9 +8,6 @@ import kotlinx.coroutines.tasks.await
 class FirestoreService {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    /**
-     * Fetches questions from the "questions" collection.
-     */
     suspend fun fetchQuestions(): List<Map<String, Any>> {
         return try {
             val snapshot = db.collection("questions").get().await()
@@ -21,19 +18,24 @@ class FirestoreService {
         }
     }
 
-    /**
-     * Pushes a completed quiz result to the "results" collection.
-     */
-    suspend fun pushResult(userId: String, score: Int, totalQuestions: Int): Boolean {
+    // Agora recebe o userName e só atualiza se for o recorde do usuário
+    suspend fun pushResult(userId: String, userName: String, score: Int, totalQuestions: Int): Boolean {
         return try {
-            val resultData = hashMapOf(
-                "userId" to userId,
-                "score" to score,
-                "totalQuestions" to totalQuestions,
-                "timestamp" to System.currentTimeMillis()
-            )
+            val docRef = db.collection("results").document(userId)
+            val doc = docRef.get().await()
 
-            db.collection("results").add(resultData).await()
+            val currentHighScore = if (doc.exists()) doc.getLong("score") ?: 0 else -1
+
+            if (score > currentHighScore) {
+                val resultData = hashMapOf(
+                    "userId" to userId,
+                    "userName" to userName,
+                    "score" to score,
+                    "totalQuestions" to totalQuestions,
+                    "timestamp" to System.currentTimeMillis()
+                )
+                docRef.set(resultData).await() // Sobrescreve/Atualiza o High Score
+            }
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -41,12 +43,8 @@ class FirestoreService {
         }
     }
 
-    /**
-     * Fetches the top scores for the Leaderboard.
-     */
     suspend fun fetchLeaderboard(): List<Map<String, Any>> {
         return try {
-            // Orders by highest score and limits to top 50
             val snapshot = db.collection("results")
                 .orderBy("score", Query.Direction.DESCENDING)
                 .limit(50)
@@ -58,15 +56,10 @@ class FirestoreService {
         }
     }
 
-    /**
-     * DEBUG ONLY: Adds sample questions to Firestore to prevent infinite loading.
-     * Run this once if your database is empty.
-     */
     suspend fun seedQuestions() {
         val questionsCollection = db.collection("questions")
         val snapshot = questionsCollection.get().await()
 
-        // Só adiciona se o banco estiver vazio para não duplicar
         if (snapshot.isEmpty) {
             val sampleQuestions = listOf(
                 hashMapOf(
@@ -94,7 +87,6 @@ class FirestoreService {
                     "correctAnswerIndex" to 2
                 )
             )
-
             for (question in sampleQuestions) {
                 questionsCollection.add(question).await()
             }

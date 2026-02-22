@@ -4,6 +4,7 @@ package com.example.fourquiz.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fourquiz.data.local.entity.Question
+import com.example.fourquiz.data.network.FirebaseAuthService
 import com.example.fourquiz.data.network.FirestoreService
 import com.example.fourquiz.data.repository.QuizRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(
     private val repository: QuizRepository,
-    private val firestoreService: FirestoreService
+    private val firestoreService: FirestoreService,
+    private val authService: FirebaseAuthService // Injetado para pegar os dados do usuário
 ) : ViewModel() {
 
     private val _questions = MutableStateFlow<List<Question>>(emptyList())
@@ -39,12 +41,10 @@ class QuizViewModel(
     fun submitAnswer(selectedIndex: Int, onQuizFinished: () -> Unit) {
         val currentQuestion = _questions.value[_currentIndex.value]
 
-        // Checa se acertou e soma os pontos
         if (selectedIndex == currentQuestion.correctAnswerIndex) {
-            _score.value += 100 // Exemplo: 100 pontos por acerto
+            _score.value += 100
         }
 
-        // Vai para a próxima pergunta ou finaliza o quiz
         if (_currentIndex.value < _questions.value.size - 1) {
             _currentIndex.value += 1
         } else {
@@ -54,10 +54,12 @@ class QuizViewModel(
 
     private fun finishQuiz(onQuizFinished: () -> Unit) {
         viewModelScope.launch {
-            // TODO: Pegar o userId real do FirebaseAuthService depois
-            val mockUserId = "user_123"
+            val userId = authService.getCurrentUserId() ?: "anon_id"
+            val userName = authService.getCurrentUserName()
+
             firestoreService.pushResult(
-                userId = mockUserId,
+                userId = userId,
+                userName = userName,
                 score = _score.value,
                 totalQuestions = _questions.value.size
             )

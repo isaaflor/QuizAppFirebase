@@ -2,15 +2,12 @@
 package com.example.fourquiz.data.network
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthService {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    /**
-     * Attempts to log in a user with email and password.
-     * Returns true if successful, false otherwise.
-     */
     suspend fun login(email: String, password: String): Boolean {
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
@@ -21,13 +18,17 @@ class FirebaseAuthService {
         }
     }
 
-    /**
-     * Attempts to register a new user with email and password.
-     * Firebase automatically logs the user in upon successful registration.
-     */
-    suspend fun register(email: String, password: String): Boolean {
+    // Agora recebemos o nome e salvamos no perfil do usuário!
+    suspend fun register(email: String, password: String, name: String): Boolean {
         return try {
-            auth.createUserWithEmailAndPassword(email, password).await()
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            val user = result.user
+
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+
+            user?.updateProfile(profileUpdates)?.await()
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -35,11 +36,13 @@ class FirebaseAuthService {
         }
     }
 
-    /**
-     * Optional utility to get the currently logged-in user's ID
-     */
-    fun getCurrentUserId(): String? {
-        return auth.currentUser?.uid
+    fun logout() {
+        auth.signOut()
     }
+
+    fun getCurrentUserId(): String? = auth.currentUser?.uid
+
+    // Pega o nome que salvamos no registro (ou "Jogador" se falhar)
+    fun getCurrentUserName(): String = auth.currentUser?.displayName ?: "Jogador"
 }
-// --- GEMINI FOOTER ---
+// --- GEMINI FOOTER ---V

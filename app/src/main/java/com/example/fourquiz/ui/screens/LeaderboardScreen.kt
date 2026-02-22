@@ -42,7 +42,8 @@ fun LeaderboardScreen(
                                     .padding(vertical = 8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "ID: ${player.email}", style = MaterialTheme.typography.bodyLarge)
+                                // Corrigido de player.email para player.name
+                                Text(text = player.name, style = MaterialTheme.typography.bodyLarge)
                                 Text(text = "${player.score} pts", style = MaterialTheme.typography.bodyLarge)
                             }
                             HorizontalDivider()

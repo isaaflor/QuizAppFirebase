@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class LeaderboardEntry(val email: String, val score: Int)
+data class LeaderboardEntry(val name: String, val score: Int)
 
 class LeaderboardViewModel(private val firestoreService: FirestoreService) : ViewModel() {
 
@@ -29,7 +29,8 @@ class LeaderboardViewModel(private val firestoreService: FirestoreService) : Vie
 
             val mappedScores = rawData.map { data ->
                 LeaderboardEntry(
-                    email = (data["userId"] as? String)?.take(5) ?: "Player",
+                    // Agora puxamos o Nome que gravamos, em vez do ID feio
+                    name = (data["userName"] as? String) ?: "Jogador",
                     score = (data["score"] as? Long)?.toInt() ?: 0
                 )
             }

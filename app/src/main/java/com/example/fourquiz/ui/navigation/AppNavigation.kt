@@ -10,19 +10,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fourquiz.FourQuizApplication
-import com.example.fourquiz.ui.screens.HomeScreen
-import com.example.fourquiz.ui.screens.LeaderboardScreen
-import com.example.fourquiz.ui.screens.LoginScreen
-import com.example.fourquiz.ui.screens.QuizScreen
-import com.example.fourquiz.ui.screens.QuizViewModel
-import com.example.fourquiz.ui.screens.LoginViewModel
-import com.example.fourquiz.ui.screens.LeaderboardViewModel
+import com.example.fourquiz.ui.screens.*
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
-    // Grab the application context to access our manual Dependency Injection container
     val context = LocalContext.current
     val appContainer = (context.applicationContext as FourQuizApplication).container
 
@@ -44,6 +36,32 @@ fun AppNavigation() {
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
+                },
+                onNavigateToRegister = {
+                    navController.navigate("register")
+                }
+            )
+        }
+
+        composable("register") {
+            val registerViewModel: RegisterViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return RegisterViewModel(appContainer.firebaseAuthService) as T
+                    }
+                }
+            )
+
+            RegisterScreen(
+                viewModel = registerViewModel,
+                onRegisterSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onBackToLogin = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -51,7 +69,12 @@ fun AppNavigation() {
         composable("home") {
             HomeScreen(
                 onStartQuiz = { navController.navigate("quiz") },
-                onViewLeaderboard = { navController.navigate("leaderboard") }
+                onViewLeaderboard = { navController.navigate("leaderboard") },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -62,7 +85,8 @@ fun AppNavigation() {
                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
                         return QuizViewModel(
                             appContainer.quizRepository,
-                            appContainer.firestoreService
+                            appContainer.firestoreService,
+                            appContainer.firebaseAuthService // Adicionado aqui!
                         ) as T
                     }
                 }
