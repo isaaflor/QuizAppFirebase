@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "549865120228",
+    "project_id": "fourquiz-ce578",
+    "storage_bucket": "fourquiz-ce578.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549865120228:android:1f16dccc6e5ee46257e7f1",
+        "android_client_info": {
+          "package_name": "com.example.fourquiz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCokViWfWqbGm4AcE4CE_-oMnpeYxVoh9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
