@@ -1,47 +1,53 @@
-// --- GEMINI CODE BLOCK START ---
+// --- GEMINI HEADER ---
 package com.example.fourquiz.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-data class PlayerScore(val name: String, val score: Int)
-
 @Composable
-fun LeaderboardScreen(onBackToHome: () -> Unit) {
-    // Mock Data
-    val mockScores = listOf(
-        PlayerScore("Alice", 1500),
-        PlayerScore("Bob", 1200),
-        PlayerScore("Charlie", 950),
-        PlayerScore("Diana", 800)
-    )
+fun LeaderboardScreen(
+    viewModel: LeaderboardViewModel,
+    onBackToHome: () -> Unit
+) {
+    val scores by viewModel.scores.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text(
-                text = "Leaderboard",
+                text = "Leaderboard Global",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(mockScores) { player ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = player.name, style = MaterialTheme.typography.bodyLarge)
-                        Text(text = "${player.score} pts", style = MaterialTheme.typography.bodyLarge)
+            if (isLoading) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    if (scores.isEmpty()) {
+                        item { Text("Nenhum resultado ainda. Seja o primeiro!") }
+                    } else {
+                        items(scores) { player ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = "ID: ${player.email}", style = MaterialTheme.typography.bodyLarge)
+                                Text(text = "${player.score} pts", style = MaterialTheme.typography.bodyLarge)
+                            }
+                            HorizontalDivider()
+                        }
                     }
-                    Divider()
                 }
             }
 
@@ -49,9 +55,9 @@ fun LeaderboardScreen(onBackToHome: () -> Unit) {
                 onClick = onBackToHome,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 16.dp)
             ) {
-                Text("Back to Home")
+                Text("Voltar para Home")
             }
         }
     }
 }
-// --- GEMINI CODE BLOCK END ---
+// --- GEMINI FOOTER ---

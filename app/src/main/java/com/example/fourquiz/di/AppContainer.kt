@@ -1,38 +1,35 @@
-# --- GEMINI HEADER ---
 package com.example.fourquiz.di
 
 import android.content.Context
-import androidx.room.Room
 import com.example.fourquiz.data.local.QuizDatabase
-import com.example.fourquiz.data.remote.FirebaseQuizService
+import com.example.fourquiz.data.network.FirebaseAuthService
+import com.example.fourquiz.data.network.FirestoreService
 import com.example.fourquiz.data.repository.QuizRepository
 
 /**
- * A simple manual dependency injection container to hold and provide
- * application-level dependencies.
+ * Manual Dependency Injection Container tailored to your Module Manifest.
  */
 class AppContainer(private val context: Context) {
 
-    // Local Database (Room)
+    // Local Database (Room) initialized via your getInstance method
     private val database: QuizDatabase by lazy {
-        Room.databaseBuilder(
-            context,
-            QuizDatabase::class.java,
-            "quiz_database"
-        ).build()
+        QuizDatabase.getInstance(context)
     }
 
-    // Remote Service (Firebase)
-    private val firebaseService: FirebaseQuizService by lazy {
-        FirebaseQuizService()
+    // Remote Services (Firebase)
+    val firestoreService: FirestoreService by lazy {
+        FirestoreService()
+    }
+
+    val firebaseAuthService: FirebaseAuthService by lazy {
+        FirebaseAuthService()
     }
 
     // Repository (Single Source of Truth)
     val quizRepository: QuizRepository by lazy {
         QuizRepository(
-            quizDao = database.quizDao(),
-            firebaseService = firebaseService
+            quizDao = database.quizDao, // Accessing your abstract property
+            firestoreService = firestoreService
         )
     }
 }
-# --- GEMINI FOOTER ---
