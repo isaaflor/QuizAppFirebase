@@ -3,6 +3,7 @@ package com.example.quizapp.model.repository.implementation
 import com.example.quizapp.model.repository.AuthRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -11,9 +12,9 @@ class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ): AuthRepository {
 
-    override fun onStart(): Boolean {
+    override fun onStart(): FirebaseUser? {
         val currentUser = auth.currentUser
-        return currentUser != null
+        return currentUser
     }
 
     override suspend fun signIn(email: String, password: String): Boolean {
