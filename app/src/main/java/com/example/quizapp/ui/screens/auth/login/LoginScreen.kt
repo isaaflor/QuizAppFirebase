@@ -7,18 +7,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.quizapp.ui.screens.auth.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel,
+    viewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    val email by viewModel.email
-    val password by viewModel.password
-    val isLoading by viewModel.isLoading
-    val errorMessage by viewModel.errorMessage
+    val authState = viewModel.authState.collectAsState()
 
+    val email = viewModel.email
+    val password = viewModel.password
+
+}
+
+@Composable
+fun LoginContent(){
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -65,4 +70,3 @@ fun LoginScreen(
         }
     }
 }
-// --- GEMINI FOOTER ---
