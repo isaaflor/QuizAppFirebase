@@ -1,15 +1,12 @@
-// --- GEMINI HEADER ---
 package com.example.quizapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fourquiz.ui.screens.*
+import com.example.quizapp.ui.screens.auth.login.LoginScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,7 +30,11 @@ fun QuizAppNavigation() {
     NavHost(navController = navController, startDestination = "login") {
 
         composable<LoginRoute> {
-            LoginScreen(viewModel = hiltViewModel())
+            LoginScreen(
+                viewModel = hiltViewModel(),
+                navigateToHomeScreen = { navController.navigate(HomeRoute) },
+                navigateToRegisterScreen = { navController.navigate(RegisterRoute) }
+            )
         }
 
         composable<RegisterRoute> {
@@ -43,8 +44,10 @@ fun QuizAppNavigation() {
         composable<HomeRoute>{
             HomeScreen(
                 viewModel = hiltViewModel(),
+                authViewModel = hiltViewModel(),
                 navigateToQuizScreen = { id: String -> navController.navigate(QuizRoute(id)) },
-                navigateToLeaderboard = { navController.navigate(LeaderboardRoute) }
+                navigateToLeaderboardScreen = { navController.navigate(LeaderboardRoute) },
+                navigateToLoginScreen = { navController.navigate(LoginRoute) },
             )
         }
 

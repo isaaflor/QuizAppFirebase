@@ -1,5 +1,4 @@
-// --- GEMINI HEADER ---
-package com.example.fourquiz.ui.screens
+package com.example.quizapp.ui.screens.auth.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,13 +10,12 @@ import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.ui.navigation.HomeRoute
 import com.example.quizapp.ui.navigation.RegisterRoute
 import com.example.quizapp.ui.screens.auth.AuthViewModel
-import com.example.quizapp.ui.screens.auth.login.LoginScreenEvent
 
 @Composable
 fun LoginScreen(
     viewModel: AuthViewModel,
-    NavigateToHomeScreen: () -> Unit,
-    NavigateToRegisterScreen: () -> Unit
+    navigateToHomeScreen: () -> Unit,
+    navigateToRegisterScreen: () -> Unit
 ) {
     val email = viewModel.email
     val password = viewModel.password
@@ -29,8 +27,8 @@ fun LoginScreen(
             when(uiEvent){
                 is UiEvent.Navigate<*> -> {
                     when(uiEvent.route){
-                        HomeRoute -> {NavigateToHomeScreen()}
-                        RegisterRoute -> {NavigateToRegisterScreen()}
+                        HomeRoute -> {navigateToHomeScreen()}
+                        RegisterRoute -> {navigateToRegisterScreen()}
                     }
                 }
                 is UiEvent.ShowSnackbar -> {
@@ -48,7 +46,6 @@ fun LoginScreen(
         authState = authState.value,
         onEvent = viewModel::onEvent
     )
-
 }
 
 @Composable

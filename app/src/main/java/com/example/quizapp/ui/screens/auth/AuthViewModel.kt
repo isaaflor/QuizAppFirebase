@@ -3,8 +3,6 @@ package com.example.quizapp.ui.screens.auth
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.tooling.parseSourceInformation
-import androidx.credentials.GetPasswordOption
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
