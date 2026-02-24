@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.ui.navigation.HomeRoute
 import com.example.quizapp.ui.navigation.RegisterRoute
+import com.example.quizapp.ui.screens.auth.AuthScreensEvent
 import com.example.quizapp.ui.screens.auth.AuthViewModel
 
 @Composable
@@ -33,7 +34,6 @@ fun LoginScreen(
                 }
                 is UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(uiEvent.message)
-
                 }
                 else -> {}
             }
@@ -53,7 +53,7 @@ fun LoginContent(
     email: String,
     password: String,
     authState: Boolean,
-    onEvent: (LoginScreenEvent) -> Unit
+    onEvent: (AuthScreensEvent) -> Unit
 ){
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -66,7 +66,7 @@ fun LoginContent(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { onEvent(LoginScreenEvent.onEmailChange(it)) },
+                onValueChange = { onEvent(AuthScreensEvent.onEmailChange(it)) },
                 label = { Text("E-mail") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -74,14 +74,14 @@ fun LoginContent(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { onEvent(LoginScreenEvent.onPasswordChange(it)) },
+                onValueChange = { onEvent(AuthScreensEvent.onPasswordChange(it)) },
                 label = { Text("Senha") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { onEvent(LoginScreenEvent.onSignIn) },
+                onClick = { onEvent(AuthScreensEvent.onSignIn) },
                 modifier = Modifier.fillMaxWidth(0.8f),
                 enabled = !authState
             ) {
@@ -91,7 +91,7 @@ fun LoginContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = {
-                onEvent(LoginScreenEvent.onSignUpClick)
+                onEvent(AuthScreensEvent.onSignUpClick)
             }, enabled = !authState) {
                 Text("Ainda não tem conta? Criar Conta")
             }

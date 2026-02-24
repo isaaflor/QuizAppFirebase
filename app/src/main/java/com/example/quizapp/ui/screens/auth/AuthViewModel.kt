@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.ui.navigation.HomeRoute
+import com.example.quizapp.ui.navigation.LoginRoute
 import com.example.quizapp.ui.navigation.RegisterRoute
-import com.example.quizapp.ui.screens.auth.login.LoginScreenEvent
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -42,17 +42,17 @@ class AuthViewModel @Inject constructor(
         checkAuthStatus()
     }
 
-    fun onEvent(event: LoginScreenEvent){
+    fun onEvent(event: AuthScreensEvent){
         when(event){
-            is LoginScreenEvent.onEmailChange -> {
+            is AuthScreensEvent.onEmailChange -> {
                 this.email = event.email
             }
 
-            is LoginScreenEvent.onPasswordChange -> {
+            is AuthScreensEvent.onPasswordChange -> {
                 this.password = event.password
             }
 
-            is LoginScreenEvent.onSignIn -> {
+            is AuthScreensEvent.onSignIn -> {
 
                 if(email.isBlank()){
                     sendUiEvent(UiEvent.ShowSnackbar("Insira um email válido!"))
@@ -76,9 +76,38 @@ class AuthViewModel @Inject constructor(
                 }
             }
 
-            is LoginScreenEvent.onSignUpClick -> {
+            is AuthScreensEvent.onSignUp -> {
+                if(email.isBlank()){
+                    sendUiEvent(UiEvent.ShowSnackbar("Insira um email válido!"))
+                    return
+                }
+
+                if(password.isBlank()){
+                    sendUiEvent(UiEvent.ShowSnackbar("Insira uma senha válida!"))
+                    return
+                }
+
+                register(email, password)
+                if(!(_authState.value)){
+                    sendUiEvent(UiEvent.ShowSnackbar("Erro ao realizar cadastro! Verifique email e senha!"))
+                    return
+                }
+                else{
+                    viewModelScope.launch {
+                        _uiEvent.send(UiEvent.Navigate(HomeRoute))
+                    }
+                }
+            }
+
+            is AuthScreensEvent.onSignUpClick -> {
                 viewModelScope.launch {
                     _uiEvent.send(UiEvent.Navigate(RegisterRoute))
+                }
+            }
+
+            is AuthScreensEvent.onSignInClick -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Navigate(LoginRoute))
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fourquiz.ui.screens.*
 import com.example.quizapp.ui.screens.auth.login.LoginScreen
+import com.example.quizapp.ui.screens.auth.register.RegisterScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -38,7 +39,11 @@ fun QuizAppNavigation() {
         }
 
         composable<RegisterRoute> {
-
+            RegisterScreen(
+                viewModel = hiltViewModel(),
+                navigateToHomeScreen = { navController.navigate(HomeRoute) },
+                navigateBack = { navController.popBackStack() }
+            )
         }
 
         composable<HomeRoute>{

@@ -1,12 +1,7 @@
-// --- GEMINI HEADER ---
-package com.example.fourquiz.ui.screens
+package com.example.quizapp.ui.screens.quiz
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fourquiz.data.local.entity.Question
-import com.example.fourquiz.data.network.FirebaseAuthService
-import com.example.fourquiz.data.network.FirestoreService
-import com.example.fourquiz.data.repository.QuizRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,4 +62,3 @@ class QuizViewModel(
         }
     }
 }
-// --- GEMINI FOOTER ---
