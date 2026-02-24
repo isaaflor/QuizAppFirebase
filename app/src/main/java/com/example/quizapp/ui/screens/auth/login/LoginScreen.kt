@@ -7,26 +7,46 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.quizapp.ui.UiEvent
+import com.example.quizapp.ui.navigation.HomeRoute
+import com.example.quizapp.ui.navigation.RegisterRoute
 import com.example.quizapp.ui.screens.auth.AuthViewModel
+import com.example.quizapp.ui.screens.auth.login.LoginScreenEvent
 
 @Composable
 fun LoginScreen(
     viewModel: AuthViewModel,
-    onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    NavigateToHomeScreen: () -> Unit,
+    NavigateToRegisterScreen: () -> Unit
 ) {
     val email = viewModel.email
     val password = viewModel.password
     val authState = viewModel.authState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { uiEvent ->
+            when(uiEvent){
+                is UiEvent.Navigate<*> -> {
+                    when(uiEvent.route){
+                        HomeRoute -> {NavigateToHomeScreen()}
+                        RegisterRoute -> {NavigateToRegisterScreen()}
+                    }
+                }
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(uiEvent.message)
 
+                }
+                else -> {}
+            }
+        }
     }
 
     LoginContent(
         email = email,
         password = password,
-        authState = authState
+        authState = authState.value,
+        onEvent = viewModel::onEvent
     )
 
 }
@@ -35,7 +55,8 @@ fun LoginScreen(
 fun LoginContent(
     email: String,
     password: String,
-    authState: State<Boolean>
+    authState: Boolean,
+    onEvent: (LoginScreenEvent) -> Unit
 ){
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -48,7 +69,7 @@ fun LoginContent(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { viewModel.email.value = it },
+                onValueChange = { onEvent(LoginScreenEvent.onEmailChange(it)) },
                 label = { Text("E-mail") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -56,28 +77,25 @@ fun LoginContent(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { viewModel.password.value = it },
+                onValueChange = { onEvent(LoginScreenEvent.onPasswordChange(it)) },
                 label = { Text("Senha") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (errorMessage != null) {
-                Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
             Button(
-                onClick = { viewModel.login(onLoginSuccess) },
+                onClick = { onEvent(LoginScreenEvent.onSignIn) },
                 modifier = Modifier.fillMaxWidth(0.8f),
-                enabled = !isLoading
+                enabled = !authState
             ) {
-                if (isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp)) else Text("Entrar")
+                if (authState) CircularProgressIndicator(modifier = Modifier.size(24.dp)) else Text("Entrar")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextButton(onClick = onNavigateToRegister, enabled = !isLoading) {
+            TextButton(onClick = {
+                onEvent(LoginScreenEvent.onSignUpClick)
+            }, enabled = !authState) {
                 Text("Ainda não tem conta? Criar Conta")
             }
         }

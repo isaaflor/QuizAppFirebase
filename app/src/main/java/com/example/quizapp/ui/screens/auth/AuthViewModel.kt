@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.ui.UiEvent
+import com.example.quizapp.ui.navigation.HomeRoute
+import com.example.quizapp.ui.navigation.RegisterRoute
 import com.example.quizapp.ui.screens.auth.login.LoginScreenEvent
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,6 +70,17 @@ class AuthViewModel @Inject constructor(
                 if(!(_authState.value)){
                     sendUiEvent(UiEvent.ShowSnackbar("Erro ao realizar login! Verifique email e senha!"))
                     return
+                }
+                else{
+                    viewModelScope.launch {
+                        _uiEvent.send(UiEvent.Navigate(HomeRoute))
+                    }
+                }
+            }
+
+            is LoginScreenEvent.onSignUpClick -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Navigate(RegisterRoute))
                 }
             }
         }
