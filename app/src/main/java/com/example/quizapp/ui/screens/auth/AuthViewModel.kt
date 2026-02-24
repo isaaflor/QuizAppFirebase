@@ -2,6 +2,7 @@ package com.example.quizapp.ui.screens.auth
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,7 +40,8 @@ class AuthViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        checkAuthStatus()
+        firebaseUser.value = authRepository.getCurrentUser()
+        _authState.value = firebaseUser.value != null
     }
 
     fun onEvent(event: AuthScreensEvent){
@@ -117,10 +119,6 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvent.send(event)
         }
-    }
-    fun checkAuthStatus(){
-        firebaseUser.value = authRepository.onStart()
-        _authState.value = firebaseUser.value != null
     }
 
     fun login(email: String, password: String){

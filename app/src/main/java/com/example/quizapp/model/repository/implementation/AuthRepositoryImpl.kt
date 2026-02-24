@@ -12,9 +12,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ): AuthRepository {
 
-    override fun onStart(): FirebaseUser? {
-        val currentUser = auth.currentUser
-        return currentUser
+    override fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
     }
 
     override suspend fun signIn(email: String, password: String): Boolean {

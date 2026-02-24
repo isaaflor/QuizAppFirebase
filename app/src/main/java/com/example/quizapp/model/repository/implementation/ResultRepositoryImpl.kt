@@ -36,12 +36,11 @@ class ResultRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertResultFromUser(score: Int, category: String, timestamp: Long): Boolean {
+    override suspend fun insertResultFromUser(score: Int, totalQuestions: Int): Boolean {
             val result = SResult(
                 userId = this.userId,
                 score = score,
-                category = category,
-                timestamp = timestamp
+                totalQuestions = totalQuestions
             )
             db.collection("results").add(result).await()
             return true

@@ -1,7 +1,8 @@
 package com.example.quizapp.model.repository
 
 import com.example.quizapp.model.Question
+import kotlinx.coroutines.flow.Flow
 
 interface QuestionRepository{
-    suspend fun getQuestionsByCategory(categoryId: String): List<Question>
+    fun getQuestionsByCategory(categoryId: String): Flow<List<Question>>
 }

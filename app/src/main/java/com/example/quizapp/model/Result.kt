@@ -6,6 +6,5 @@ data class Result(
     @DocumentId val id: String = "",
     val userId: String = "",
     val score: Int = 0,
-    val category: String = "",
-    val timestamp: Long,
+    val totalQuestions: Int = 0,
 )

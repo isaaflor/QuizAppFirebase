@@ -9,8 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.quizapp.model.Question
 import com.example.quizapp.ui.screens.quiz.QuizViewModel
 
+//TODO: CONTINUE
 @Composable
 fun QuizScreen(
     viewModel: QuizViewModel,
@@ -20,8 +22,21 @@ fun QuizScreen(
     val currentIndex by viewModel.currentIndex.collectAsState()
 
     var selectedOptionIndex by remember { mutableStateOf(-1) }
-    var isAnswerEvaluated by remember { mutableStateOf(false) } // Controla o estado de feedback visual
+    var isAnswerEvaluated by remember { mutableStateOf(false) }
 
+    QuestionContent(
+        questions = questions,
+        currentIndex = currentIndex,
+        selectedOptionIndex = selectedOptionIndex,
+    )
+}
+
+@Composable
+fun QuestionContent(
+    questions: List<Question>,
+    currentIndex: Int,
+    selectedOptionIndex: Int
+){
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         if (questions.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -113,4 +128,3 @@ fun QuizScreen(
         }
     }
 }
-// --- GEMINI FOOTER ---

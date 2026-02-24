@@ -6,7 +6,7 @@ data class Question(
     @DocumentId val id: String = "",
     val text: String = "",
     val options: List<String> = emptyList(),
-    val correctAnswer: String = "",
+    val correctAnswerIndex: Int = 0,
     val categoryId: String = "",
     val difficulty: String = ""
 )
