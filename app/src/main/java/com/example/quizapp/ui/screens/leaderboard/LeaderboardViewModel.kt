@@ -1,42 +1,40 @@
-// --- GEMINI HEADER ---
-package com.example.fourquiz.ui.screens
+package com.example.quizapp.ui.screens.leaderboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fourquiz.data.network.FirestoreService
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.quizapp.model.repository.ResultRepository
+import com.example.quizapp.ui.UiEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class LeaderboardEntry(val name: String, val score: Int)
 
-class LeaderboardViewModel(private val firestoreService: FirestoreService) : ViewModel() {
+@HiltViewModel
+class LeaderboardViewModel @Inject constructor(
+    private val resultRepository: ResultRepository
+) : ViewModel() {
 
-    private val _scores = MutableStateFlow<List<LeaderboardEntry>>(emptyList())
-    val scores: StateFlow<List<LeaderboardEntry>> = _scores
+    val results = resultRepository.getAllResultsFromUser().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    init {
-        fetchLeaderboard()
-    }
-
-    private fun fetchLeaderboard() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            val rawData = firestoreService.fetchLeaderboard()
-
-            val mappedScores = rawData.map { data ->
-                LeaderboardEntry(
-                    // Agora puxamos o Nome que gravamos, em vez do ID feio
-                    name = (data["userName"] as? String) ?: "Jogador",
-                    score = (data["score"] as? Long)?.toInt() ?: 0
-                )
+    fun onEvent(event: LeaderboardScreenEvent){
+        when(event){
+            is LeaderboardScreenEvent.onExitLeaderboard -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.NavigateBack)
+                }
             }
-            _scores.value = mappedScores
-            _isLoading.value = false
         }
     }
+
 }
-// --- GEMINI FOOTER ---

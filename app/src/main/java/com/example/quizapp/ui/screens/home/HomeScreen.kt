@@ -46,6 +46,7 @@ fun HomeScreen(
                     }
                 }
                 is UiEvent.ShowSnackbar -> {}
+                is UiEvent.NavigateBack -> {}
             }
         }
     }
