@@ -15,15 +15,28 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    val authState = viewModel.authState.collectAsState()
-
     val email = viewModel.email
     val password = viewModel.password
+    val authState = viewModel.authState.collectAsState()
+
+    LaunchedEffect(Unit) {
+
+    }
+
+    LoginContent(
+        email = email,
+        password = password,
+        authState = authState
+    )
 
 }
 
 @Composable
-fun LoginContent(){
+fun LoginContent(
+    email: String,
+    password: String,
+    authState: State<Boolean>
+){
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier.fillMaxSize().padding(24.dp),

@@ -18,6 +18,7 @@ import com.example.quizapp.ui.components.CategoryCard
 import com.example.quizapp.ui.navigation.LeaderboardRoute
 import com.example.quizapp.ui.navigation.LoginRoute
 import com.example.quizapp.ui.navigation.QuizRoute
+import com.example.quizapp.ui.screens.auth.AuthViewModel
 import com.example.quizapp.ui.screens.home.HomeScreenEvent
 import com.example.quizapp.ui.screens.home.HomeScreenViewModel
 
@@ -44,6 +45,7 @@ fun HomeScreen(
                         }
                     }
                 }
+                is UiEvent.ShowSnackbar -> {}
             }
         }
     }

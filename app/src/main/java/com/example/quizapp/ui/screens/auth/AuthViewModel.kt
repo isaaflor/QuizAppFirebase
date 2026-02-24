@@ -64,8 +64,10 @@ class AuthViewModel @Inject constructor(
                     return
                 }
 
-                viewModelScope.launch {
-                    authRepository.signIn(email, password)
+                login(email, password)
+                if(!(_authState.value)){
+                    sendUiEvent(UiEvent.ShowSnackbar("Erro ao realizar login! Verifique email e senha!"))
+                    return
                 }
             }
         }
