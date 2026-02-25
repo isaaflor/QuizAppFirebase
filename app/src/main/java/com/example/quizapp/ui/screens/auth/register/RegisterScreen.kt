@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.model.navigation.HomeRoute
+import com.example.quizapp.navigation.HomeRoute
 import com.example.quizapp.ui.screens.auth.AuthScreensEvent
 import com.example.quizapp.ui.screens.auth.AuthViewModel
 

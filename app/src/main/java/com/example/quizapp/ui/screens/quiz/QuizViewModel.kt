@@ -10,7 +10,7 @@ import androidx.navigation.toRoute
 import com.example.quizapp.model.repository.QuestionRepository
 import com.example.quizapp.model.repository.ResultRepository
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.model.navigation.QuizRoute
+import com.example.quizapp.navigation.QuizRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
