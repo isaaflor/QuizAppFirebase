@@ -20,9 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.quizapp.model.Category
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.ui.navigation.LeaderboardRoute
-import com.example.quizapp.ui.navigation.LoginRoute
-import com.example.quizapp.ui.navigation.QuizRoute
+import com.example.quizapp.model.navigation.LeaderboardRoute
+import com.example.quizapp.model.navigation.LoginRoute
+import com.example.quizapp.model.navigation.QuizRoute
 import com.example.quizapp.ui.screens.auth.AuthViewModel
 
 @Composable

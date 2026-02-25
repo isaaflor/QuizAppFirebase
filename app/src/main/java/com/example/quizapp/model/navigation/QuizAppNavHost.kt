@@ -1,4 +1,4 @@
-package com.example.quizapp.ui.navigation
+package com.example.quizapp.model.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel

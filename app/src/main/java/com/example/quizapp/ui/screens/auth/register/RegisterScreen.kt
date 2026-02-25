@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
@@ -17,7 +16,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.ui.navigation.HomeRoute
+import com.example.quizapp.model.navigation.HomeRoute
 import com.example.quizapp.ui.screens.auth.AuthScreensEvent
 import com.example.quizapp.ui.screens.auth.AuthViewModel
 

@@ -6,9 +6,9 @@ import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.model.repository.CategoryRepository
 import com.example.quizapp.model.repository.QuestionRepository
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.ui.navigation.LeaderboardRoute
-import com.example.quizapp.ui.navigation.LoginRoute
-import com.example.quizapp.ui.navigation.QuizRoute
+import com.example.quizapp.model.navigation.LeaderboardRoute
+import com.example.quizapp.model.navigation.LoginRoute
+import com.example.quizapp.model.navigation.QuizRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted

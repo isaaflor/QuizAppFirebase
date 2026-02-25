@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.ui.UiEvent
-import com.example.quizapp.ui.navigation.HomeRoute
-import com.example.quizapp.ui.navigation.RegisterRoute
+import com.example.quizapp.model.navigation.HomeRoute
+import com.example.quizapp.model.navigation.RegisterRoute
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
