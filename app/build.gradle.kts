@@ -12,9 +12,7 @@ plugins {
 
 android {
     namespace = "com.example.quizapp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.quizapp"
@@ -61,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.games)
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,5 +77,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.compose.material:material-icons-extended")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 }

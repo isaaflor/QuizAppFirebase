@@ -7,4 +7,5 @@ interface AuthScreensEvent {
     data object onSignUp: AuthScreensEvent
     data object onSignInClick: AuthScreensEvent
     data object onSignUpClick: AuthScreensEvent
+    data class onGoogleSignIn(val idToken: String): AuthScreensEvent
 }

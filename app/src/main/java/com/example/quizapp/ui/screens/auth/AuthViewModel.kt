@@ -92,6 +92,20 @@ class AuthViewModel @Inject constructor(
                     _uiEvent.send(UiEvent.NavigateBack)
                 }
             }
+
+            is AuthScreensEvent.onGoogleSignIn -> {
+                signInWithGoogle(event.idToken)
+            }
+        }
+    }
+
+    private fun signInWithGoogle(idToken: String) = viewModelScope.launch {
+        val success = authRepository.signInWithGoogle(idToken)
+        _authState.value = success
+        if (success) {
+            _uiEvent.send(UiEvent.Navigate(HomeRoute))
+        } else {
+            _uiEvent.send(UiEvent.ShowSnackbar("Erro ao realizar login com Google!"))
         }
     }
 

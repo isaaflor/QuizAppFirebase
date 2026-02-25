@@ -6,5 +6,6 @@ interface AuthRepository {
     fun getCurrentUser(): FirebaseUser?
     suspend fun signIn(email: String, password: String): Boolean
     suspend fun signUp(email: String, password: String): Boolean
+    suspend fun signInWithGoogle(idToken: String): Boolean
     fun signOut()
 }

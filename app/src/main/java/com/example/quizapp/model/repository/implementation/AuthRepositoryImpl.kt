@@ -4,6 +4,7 @@ import com.example.quizapp.model.repository.AuthRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -33,6 +34,17 @@ class AuthRepositoryImpl @Inject constructor(
             true
         }
         catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun signInWithGoogle(idToken: String): Boolean {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            auth.signInWithCredential(credential).await()
+            true
+        } catch (e: Exception) {
             e.printStackTrace()
             false
         }
