@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.model.repository.CategoryRepository
+import com.example.quizapp.model.repository.QuestionRepository
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.ui.navigation.LeaderboardRoute
 import com.example.quizapp.ui.navigation.LoginRoute
@@ -19,9 +20,15 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val questionRepository: QuestionRepository
 ): ViewModel(){
 
+    init {
+        viewModelScope.launch {
+            questionRepository.seedQuestions()
+        }
+    }
     val categories = categoryRepository.getAllCategories().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

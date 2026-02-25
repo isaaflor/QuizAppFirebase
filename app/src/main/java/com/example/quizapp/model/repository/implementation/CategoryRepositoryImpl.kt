@@ -12,20 +12,21 @@ class CategoryRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore
 ): CategoryRepository {
     override fun getAllCategories(): Flow<List<Category>> = callbackFlow {
-        val collection = db.collection("categories")
-        val listener = collection.addSnapshotListener {
-            snapshot, error ->
-            if(error != null){
-                close(error)
-                return@addSnapshotListener
+        val listener = db.collection("questions")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val categories = snapshot?.documents
+                    ?.mapNotNull { it.getString("categoryId") }
+                    ?.distinct()
+                    ?.map { categoryId ->
+                        Category(id = categoryId, name = categoryId)
+                    } ?: emptyList()
+
+                trySend(categories)
             }
-            if(snapshot != null){
-                val items = snapshot.toObjects(Category::class.java)
-                trySend(items).isSuccess
-            }
-        }
-        awaitClose {
-            listener.remove()
-        }
+        awaitClose { listener.remove() }
     }
 }

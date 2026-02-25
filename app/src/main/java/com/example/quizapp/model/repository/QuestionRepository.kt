@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface QuestionRepository{
     fun getQuestionsByCategory(categoryId: String): Flow<List<Question>>
+    suspend fun seedQuestions()
 }
