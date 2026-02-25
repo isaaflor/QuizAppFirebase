@@ -1,5 +1,7 @@
 package com.example.quizapp.ui.screens.leaderboard
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.ResultRepository
@@ -19,11 +21,13 @@ class LeaderboardViewModel @Inject constructor(
     private val resultRepository: ResultRepository
 ) : ViewModel() {
 
-    val results = resultRepository.getAllResultsFromUser().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    val results = resultRepository.getAllResultsFromUser()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 

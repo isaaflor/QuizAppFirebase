@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ResultRepository {
     fun getAllResultsFromUser(): Flow<List<Result>>
-    suspend fun insertResultFromUser(score: Int, totalQuestions: Int): Boolean
+    suspend fun insertResultFromUser(quizCategory: String, score: Int, totalQuestions: Int): Boolean
 }

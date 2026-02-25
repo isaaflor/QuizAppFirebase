@@ -22,6 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
             true
         }
         catch (e: Exception){
+            e.printStackTrace()
             false
         }
     }
@@ -32,11 +33,12 @@ class AuthRepositoryImpl @Inject constructor(
             true
         }
         catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }
 
     override fun signOut() {
-        Firebase.auth.signOut()
+        auth.signOut()
     }
 }

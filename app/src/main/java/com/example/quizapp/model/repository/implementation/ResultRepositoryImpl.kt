@@ -4,6 +4,7 @@ import com.example.quizapp.model.Result
 import com.example.quizapp.model.SResult
 import com.example.quizapp.model.repository.ResultRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -16,18 +17,24 @@ class ResultRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ): ResultRepository {
 
-    private val userId = auth.currentUser?.uid
+    private val currentUser: FirebaseUser?
+        get() = auth.currentUser
 
     override fun getAllResultsFromUser(): Flow<List<Result>> = callbackFlow {
-        val collections = db.collection("results").whereEqualTo("userId", userId)
+        val uid = currentUser?.uid
+        if (uid == null){
+            trySend(emptyList())
+            return@callbackFlow
+        }
+
+        val collections = db.collection("results").whereEqualTo("userId", uid)
         val listener = collections.addSnapshotListener { snapshot, error ->
             if(error != null){
                 close(error)
                 return@addSnapshotListener
             }
-
-            if(snapshot != null){
-                val items = snapshot.toObjects(Result::class.java)
+            snapshot?.let {
+                val items = it.toObjects(Result::class.java)
                 trySend(items)
             }
         }
@@ -36,13 +43,22 @@ class ResultRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertResultFromUser(score: Int, totalQuestions: Int): Boolean {
+    override suspend fun insertResultFromUser(quizCategory: String, score: Int, totalQuestions: Int): Boolean {
+        return try {
+            val user = currentUser ?: return false
+
             val result = SResult(
-                userId = this.userId,
+                userId = user.uid,
+                userEmail = user.email,
+                quizCategory = quizCategory,
                 score = score,
                 totalQuestions = totalQuestions
             )
             db.collection("results").add(result).await()
-            return true
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 }

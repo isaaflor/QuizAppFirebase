@@ -5,9 +5,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.fourquiz.ui.screens.*
 import com.example.quizapp.ui.screens.auth.login.LoginScreen
 import com.example.quizapp.ui.screens.auth.register.RegisterScreen
+import com.example.quizapp.ui.screens.home.HomeScreen
+import com.example.quizapp.ui.screens.leaderboard.LeaderboardScreen
+import com.example.quizapp.ui.screens.quiz.QuizScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,9 +28,9 @@ data class QuizRoute(val id: String)
 object LeaderboardRoute
 
 @Composable
-fun QuizAppNavigation() {
+fun QuizAppNavHost() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = LoginRoute) {
 
         composable<LoginRoute> {
             LoginScreen(
@@ -57,11 +59,17 @@ fun QuizAppNavigation() {
         }
 
         composable<QuizRoute>{
-
+            QuizScreen(
+                viewModel = hiltViewModel(),
+                navigateBack = { navController.popBackStack() }
+            )
         }
 
         composable<LeaderboardRoute> {
-
+            LeaderboardScreen(
+                viewModel = hiltViewModel(),
+                navigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

@@ -2,14 +2,12 @@ package com.example.quizapp.ui.screens.auth
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.ui.navigation.HomeRoute
-import com.example.quizapp.ui.navigation.LoginRoute
 import com.example.quizapp.ui.navigation.RegisterRoute
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,8 +42,8 @@ class AuthViewModel @Inject constructor(
         _authState.value = firebaseUser.value != null
     }
 
-    fun onEvent(event: AuthScreensEvent){
-        when(event){
+    fun onEvent(event: AuthScreensEvent) {
+        when (event) {
             is AuthScreensEvent.onEmailChange -> {
                 this.email = event.email
             }
@@ -56,49 +54,31 @@ class AuthViewModel @Inject constructor(
 
             is AuthScreensEvent.onSignIn -> {
 
-                if(email.isBlank()){
+                if (email.isBlank()) {
                     sendUiEvent(UiEvent.ShowSnackbar("Insira um email válido!"))
                     return
                 }
 
-                if(password.isBlank()){
+                if (password.isBlank()) {
                     sendUiEvent(UiEvent.ShowSnackbar("Insira uma senha válida!"))
                     return
                 }
 
                 login(email, password)
-                if(!(_authState.value)){
-                    sendUiEvent(UiEvent.ShowSnackbar("Erro ao realizar login! Verifique email e senha!"))
-                    return
-                }
-                else{
-                    viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Navigate(HomeRoute))
-                    }
-                }
             }
 
             is AuthScreensEvent.onSignUp -> {
-                if(email.isBlank()){
+                if (email.isBlank()) {
                     sendUiEvent(UiEvent.ShowSnackbar("Insira um email válido!"))
                     return
                 }
 
-                if(password.isBlank()){
+                if (password.isBlank()) {
                     sendUiEvent(UiEvent.ShowSnackbar("Insira uma senha válida!"))
                     return
                 }
 
                 register(email, password)
-                if(!(_authState.value)){
-                    sendUiEvent(UiEvent.ShowSnackbar("Erro ao realizar cadastro! Verifique email e senha!"))
-                    return
-                }
-                else{
-                    viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Navigate(HomeRoute))
-                    }
-                }
             }
 
             is AuthScreensEvent.onSignUpClick -> {
@@ -109,31 +89,40 @@ class AuthViewModel @Inject constructor(
 
             is AuthScreensEvent.onSignInClick -> {
                 viewModelScope.launch {
-                    _uiEvent.send(UiEvent.Navigate(LoginRoute))
+                    _uiEvent.send(UiEvent.NavigateBack)
                 }
             }
         }
     }
 
-    fun sendUiEvent(event: UiEvent){
+    fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
             _uiEvent.send(event)
         }
     }
 
-    fun login(email: String, password: String){
-        viewModelScope.launch {
-            _authState.value = authRepository.signIn(email, password)
+    fun login(email: String, password: String) = viewModelScope.launch {
+        val success = authRepository.signIn(email, password)
+        _authState.value = success
+        if (success) {
+            _uiEvent.send(UiEvent.Navigate(HomeRoute))
+        } else {
+            _uiEvent.send(UiEvent.ShowSnackbar("Erro ao realizar login! Verifique email e senha!"))
         }
     }
 
-    fun register(email: String, password: String){
-        viewModelScope.launch {
-            _authState.value = authRepository.signUp(email, password)
+
+    fun register(email: String, password: String) = viewModelScope.launch {
+        val success = authRepository.signUp(email, password)
+        _authState.value = success
+        if (success) {
+            _uiEvent.send(UiEvent.Navigate(HomeRoute))
+        } else {
+            _uiEvent.send(UiEvent.ShowSnackbar("Erro ao realizar cadastro! Verifique email e senha!"))
         }
     }
 
-    fun signOut(){
+    fun signOut() {
         authRepository.signOut()
         _authState.value = false
     }
