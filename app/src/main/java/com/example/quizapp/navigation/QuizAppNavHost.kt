@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quizapp.ui.screens.auth.login.LoginScreen
 import com.example.quizapp.ui.screens.auth.register.RegisterScreen
+import com.example.quizapp.ui.screens.history.HistoryScreen
 import com.example.quizapp.ui.screens.home.HomeScreen
 import com.example.quizapp.ui.screens.leaderboard.LeaderboardScreen
 import com.example.quizapp.ui.screens.quiz.QuizScreen
@@ -26,6 +27,10 @@ data class QuizRoute(val id: String)
 
 @Serializable
 object LeaderboardRoute
+
+@Serializable
+object HistoryRoute
+
 
 @Composable
 fun QuizAppNavHost() {
@@ -54,6 +59,7 @@ fun QuizAppNavHost() {
                 authViewModel = hiltViewModel(),
                 navigateToQuizScreen = { id: String -> navController.navigate(QuizRoute(id)) },
                 navigateToLeaderboardScreen = { navController.navigate(LeaderboardRoute) },
+                navigateToHistoryScreen = { navController.navigate(HistoryRoute) },
                 navigateToLoginScreen = { navController.navigate(LoginRoute) },
             )
         }
@@ -71,5 +77,13 @@ fun QuizAppNavHost() {
                 navigateBack = { navController.popBackStack() }
             )
         }
+
+        composable<HistoryRoute> {
+            HistoryScreen(
+                viewModel = hiltViewModel(),
+                navigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
+

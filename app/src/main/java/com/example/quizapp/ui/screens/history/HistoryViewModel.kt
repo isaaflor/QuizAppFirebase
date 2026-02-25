@@ -1,10 +1,7 @@
-package com.example.quizapp.ui.screens.leaderboard
+package com.example.quizapp.ui.screens.history
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quizapp.model.repository.LeaderboardRepository
 import com.example.quizapp.model.repository.ResultRepository
 import com.example.quizapp.ui.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,12 +11,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
-class LeaderboardViewModel @Inject constructor(
-    private val leaderboardRepository: LeaderboardRepository
+class HistoryViewModel @Inject constructor(
+    private val resultRepository: ResultRepository
 ) : ViewModel() {
 
-    val leaderboardEntries = leaderboardRepository.getAllLeaderboardEntries()
+    val results = resultRepository.getAllResultsFromUser()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -29,9 +27,9 @@ class LeaderboardViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onEvent(event: LeaderboardScreenEvent){
+    fun onEvent(event: HistoryScreenEvent){
         when(event){
-            is LeaderboardScreenEvent.onExitLeaderboard -> {
+            is HistoryScreenEvent.OnExitHistory -> {
                 viewModelScope.launch {
                     _uiEvent.send(UiEvent.NavigateBack)
                 }

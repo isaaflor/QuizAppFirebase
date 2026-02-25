@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.model.repository.AuthRepository
 import com.example.quizapp.model.repository.CategoryRepository
 import com.example.quizapp.model.repository.QuestionRepository
+import com.example.quizapp.navigation.HistoryRoute
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.navigation.LeaderboardRoute
 import com.example.quizapp.navigation.LoginRoute
@@ -49,6 +50,12 @@ class HomeScreenViewModel @Inject constructor(
             is HomeScreenEvent.onViewLeaderboard ->{
                 viewModelScope.launch {
                     _uiEvent.send(UiEvent.Navigate(LeaderboardRoute))
+                }
+            }
+
+            is HomeScreenEvent.onViewHistory -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Navigate(HistoryRoute))
                 }
             }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Leaderboard // Requer material-icons-extended
 import androidx.compose.material.icons.filled.Quiz        // Requer material-icons-extended
 import androidx.compose.material3.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.quizapp.model.Category
+import com.example.quizapp.navigation.HistoryRoute
 import com.example.quizapp.ui.UiEvent
 import com.example.quizapp.navigation.LeaderboardRoute
 import com.example.quizapp.navigation.LoginRoute
@@ -31,6 +33,7 @@ fun HomeScreen(
     authViewModel: AuthViewModel,
     navigateToQuizScreen: (id: String) -> Unit,
     navigateToLeaderboardScreen: () -> Unit,
+    navigateToHistoryScreen: () -> Unit,
     navigateToLoginScreen: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState()
@@ -42,6 +45,7 @@ fun HomeScreen(
                     when(uiEvent.route){
                         is QuizRoute -> { navigateToQuizScreen(uiEvent.route.id) }
                         is LeaderboardRoute -> { navigateToLeaderboardScreen() }
+                        is HistoryRoute -> { navigateToHistoryScreen() }
                         is LoginRoute -> {
                             authViewModel.signOut()
                             navigateToLoginScreen()
@@ -78,6 +82,9 @@ fun HomeContent(
                 actions = {
                     IconButton(onClick = { onEvent(HomeScreenEvent.onViewLeaderboard) }) {
                         Icon(Icons.Default.Leaderboard, contentDescription = "Placar")
+                    }
+                    IconButton(onClick = { onEvent(HomeScreenEvent.onViewHistory) }) {
+                        Icon(Icons.Default.History, contentDescription = "Histórico")
                     }
                     IconButton(onClick = { onEvent(HomeScreenEvent.onLogout) }) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair")

@@ -43,7 +43,7 @@ class ResultRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertResultFromUser(quizCategory: String, score: Int, totalQuestions: Int): Boolean {
+    override suspend fun insertResultFromUser(quizCategory: String, score: Long, totalQuestions: Int): Boolean {
         return try {
             val user = currentUser ?: return false
 

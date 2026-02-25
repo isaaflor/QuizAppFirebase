@@ -7,6 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.example.quizapp.model.repository.AuthRepository
+import com.example.quizapp.model.repository.LeaderboardRepository
 import com.example.quizapp.model.repository.QuestionRepository
 import com.example.quizapp.model.repository.ResultRepository
 import com.example.quizapp.ui.UiEvent
@@ -25,12 +27,14 @@ import javax.inject.Inject
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val questionRepository: QuestionRepository,
+    private val authRepository: AuthRepository,
     private val resultRepository: ResultRepository,
+    private val leaderboardRepository: LeaderboardRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val quizRoute: QuizRoute = savedStateHandle.toRoute()
-    private val category = quizRoute.id
-    val questions = questionRepository.getQuestionsByCategory(category).stateIn(
+    private val categoryId = quizRoute.id
+    val questions = questionRepository.getQuestionsByCategory(categoryId).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -38,8 +42,8 @@ class QuizViewModel @Inject constructor(
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
 
-    private val _score = MutableStateFlow(0)
-    val score: StateFlow<Int> = _score.asStateFlow()
+    private val _score = MutableStateFlow(0L)
+    val score: StateFlow<Long> = _score.asStateFlow()
 
     var selectedOptionIndex by mutableStateOf<Int>(-1)
         private set
@@ -66,26 +70,34 @@ class QuizViewModel @Inject constructor(
         }
     }
     fun submitAnswer(selectedIndex: Int) {
-        val currentQuestion = questions.value[_currentIndex.value]
+        val currentQuestionList = questions.value
+        if(currentQuestionList.isEmpty()) return
 
-        if(selectedIndex == -1){
-            submitQuiz(currentQuestion.categoryId, _score.value, questions.value.size)
-        }
+        val currentIndex = _currentIndex.value
+        val currentQuestion = currentQuestionList[currentIndex]
 
         if (selectedIndex == currentQuestion.correctAnswerIndex) {
             _score.value += 100
         }
 
-        if (_currentIndex.value < questions.value.size - 1) {
+        if (currentIndex < currentQuestionList.size - 1) {
             _currentIndex.value += 1
+            selectedOptionIndex = -1
+            isAnswerEvaluated = false
         } else {
-            submitQuiz(currentQuestion.categoryId, _score.value, questions.value.size)
+            submitQuiz(categoryId, _score.value, currentQuestionList.size)
         }
     }
 
-    private fun submitQuiz(category: String, score: Int, totalQuestions: Int) = viewModelScope.launch {
-        val success = resultRepository.insertResultFromUser(category, score, totalQuestions)
-        if (success) {
+    private fun submitQuiz(category: String, score: Long, totalQuestions: Int) = viewModelScope.launch {
+        val currentUser = authRepository.getCurrentUser()
+        val currentUserId = currentUser?.uid
+        val currentUserEmail = currentUser?.email
+
+        val successAddResult = resultRepository.insertResultFromUser(category, score, totalQuestions)
+        val successUpdateLeaderboard = leaderboardRepository.updateUserLeaderboardScore(currentUserId, currentUserEmail, score)
+
+        if (successAddResult || successUpdateLeaderboard) {
             _uiSend.send(UiEvent.NavigateBack)
         }
     }

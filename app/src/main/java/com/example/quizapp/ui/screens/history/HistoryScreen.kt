@@ -1,5 +1,6 @@
-package com.example.quizapp.ui.screens.leaderboard
+package com.example.quizapp.ui.screens.history
 
+import android.webkit.WebHistoryItem
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,16 +17,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.quizapp.model.Leaderboard
 import com.example.quizapp.model.Result
 import com.example.quizapp.ui.UiEvent
 
 @Composable
-fun LeaderboardScreen(
-    viewModel: LeaderboardViewModel,
+fun HistoryScreen(
+    viewModel: HistoryViewModel,
     navigateBack: () -> Unit
 ) {
-    val leaderboardEntries by viewModel.leaderboardEntries.collectAsStateWithLifecycle()
+    val results by viewModel.results.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { uiEvent ->
@@ -39,37 +39,37 @@ fun LeaderboardScreen(
         }
     }
 
-    LeaderboardContent(
-        leaderboardEntries = leaderboardEntries,
+    HistoryContent(
+        results = results,
         onEvent = viewModel::onEvent
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LeaderboardContent(
-    leaderboardEntries: List<Leaderboard>,
-    onEvent: (LeaderboardScreenEvent) -> Unit
+fun HistoryContent(
+    results: List<Result>,
+    onEvent: (HistoryScreenEvent) -> Unit
 ){
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Placar de Líderes",
+                        "Histórico de quizzes",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(LeaderboardScreenEvent.onExitLeaderboard) }) {
+                    IconButton(onClick = { onEvent(HistoryScreenEvent.OnExitHistory) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
         }
     ) { padding ->
-        if (leaderboardEntries.isEmpty()) {
+        if (results.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -77,13 +77,13 @@ fun LeaderboardContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Nenhum resultado ainda 🏆",
+                    "Nenhum quiz realizado ainda 🏆",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
-            val sortedResults = leaderboardEntries.sortedByDescending { it.totalScore }
+            val sortedResults = results.sortedByDescending { it.score }
 
             LazyColumn(
                 modifier = Modifier
@@ -93,7 +93,7 @@ fun LeaderboardContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 itemsIndexed(sortedResults) { index, result ->
-                    LeaderboardItem(rank = index + 1, result = result)
+                    HistoryItem(result = result)
                 }
             }
         }
@@ -101,14 +101,7 @@ fun LeaderboardContent(
 }
 
 @Composable
-fun LeaderboardItem(rank: Int, result: Leaderboard) {
-    val rankColor = when (rank) {
-        1 -> Color(0xFFFFD700) // Ouro
-        2 -> Color(0xFFC0C0C0) // Prata
-        3 -> Color(0xFFCD7F32) // Bronze
-        else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-    }
-
+fun HistoryItem(result: Result) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -121,23 +114,6 @@ fun LeaderboardItem(rank: Int, result: Leaderboard) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(42.dp),
-                shape = CircleShape,
-                color = rankColor
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = rank.toString(),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = if (rank <= 3) Color.White else MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
             // Informações do Jogador
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -145,12 +121,17 @@ fun LeaderboardItem(rank: Int, result: Leaderboard) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.ExtraBold
                 )
+                Text(
+                    text = result.quizCategory,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
 
             // Pontuação
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${result.totalScore}",
+                    text = "${result.score}",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Black

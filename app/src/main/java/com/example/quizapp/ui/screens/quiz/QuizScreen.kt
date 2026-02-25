@@ -60,7 +60,7 @@ fun QuizScreen(
 fun QuestionContent(
     onEvent: (QuizScreenEvent) -> Unit,
     questions: List<Question>,
-    score: Int,
+    score: Long,
     currentIndex: Int,
     selectedOptionIndex: Int,
     isAnswerEvaluated: Boolean,
