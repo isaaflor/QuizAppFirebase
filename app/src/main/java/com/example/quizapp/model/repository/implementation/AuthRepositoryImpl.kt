@@ -1,0 +1,56 @@
+package com.example.quizapp.model.repository.implementation
+
+import com.example.quizapp.model.repository.AuthRepository
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+
+class AuthRepositoryImpl @Inject constructor(
+    private val auth: FirebaseAuth
+): AuthRepository {
+
+    override fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
+
+    override suspend fun signIn(email: String, password: String): Boolean {
+        return try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            true
+        }
+        catch (e: Exception){
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun signUp(email: String, password: String): Boolean {
+        return try {
+            auth.createUserWithEmailAndPassword(email, password).await()
+            true
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun signInWithGoogle(idToken: String): Boolean {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            auth.signInWithCredential(credential).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override fun signOut() {
+        auth.signOut()
+    }
+}

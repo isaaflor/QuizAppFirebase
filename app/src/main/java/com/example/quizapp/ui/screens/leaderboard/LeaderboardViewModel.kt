@@ -1,0 +1,42 @@
+package com.example.quizapp.ui.screens.leaderboard
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.quizapp.model.repository.LeaderboardRepository
+import com.example.quizapp.model.repository.ResultRepository
+import com.example.quizapp.ui.UiEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+@HiltViewModel
+class LeaderboardViewModel @Inject constructor(
+    private val leaderboardRepository: LeaderboardRepository
+) : ViewModel() {
+
+    val leaderboardEntries = leaderboardRepository.getAllLeaderboardEntries()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    fun onEvent(event: LeaderboardScreenEvent){
+        when(event){
+            is LeaderboardScreenEvent.onExitLeaderboard -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.NavigateBack)
+                }
+            }
+        }
+    }
+
+}
